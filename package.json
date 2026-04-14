@@ -1,0 +1,26 @@
+{
+  "name": "it-board",
+  "version": "1.0.0",
+  "description": "IT Board - Bacheca Annunci IT | Gruppo Casillo",
+  "keywords": [],
+  "main": "src/index.js",
+  "dependencies": {
+    "aws-sdk": "2.1337.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-scripts": "4.0.1",
+    "styled-components": "5.3.6"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
