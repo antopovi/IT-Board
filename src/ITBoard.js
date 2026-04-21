@@ -77,6 +77,44 @@ const AdminButton = styled.button`
   }
 `;
 
+const UserChip = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #edf2f7;
+  color: #2d3748;
+  font-size: 12px;
+  font-weight: 500;
+  .material-icons {
+    font-size: 16px;
+    color: #4a5568;
+  }
+`;
+
+const LogoutButton = styled.button`
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff;
+  color: #c53030;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  .material-icons {
+    font-size: 16px;
+  }
+  &:hover {
+    background: #fed7d7;
+    border-color: #fed7d7;
+  }
+`;
+
 const BackButton = styled.button`
   padding: 6px 12px;
   font-size: 12px;
@@ -500,7 +538,7 @@ const INITIAL_ANNOUNCEMENTS = [
   {
     id: 1,
     title: "Manutenzione programmata SAP ECC",
-    body: "Sabato 12 aprile dalle ore 06:00 alle 12:00 il sistema SAP sar\u00e0 non disponibile per attivit\u00e0 di manutenzione e aggiornamento kernel. Tutti i moduli (FI, CO, MM, SD, PP, QM, WM) saranno interessati. Si prega di completare le attivit\u00e0 urgenti entro venerd\u00ec sera.",
+    body: "Sabato 12 aprile dalle ore 06:00 alle 12:00 il sistema SAP sarà non disponibile per attività di manutenzione e aggiornamento kernel. Tutti i moduli (FI, CO, MM, SD, PP, QM, WM) saranno interessati. Si prega di completare le attività urgenti entro venerdì sera.",
     priority: "critical",
     author: "IT Infrastructure",
     createdAt: "2026-04-09",
@@ -509,8 +547,8 @@ const INITIAL_ANNOUNCEMENTS = [
   },
   {
     id: 2,
-    title: "Nuova VPN aziendale attiva da luned\u00ec",
-    body: "Da luned\u00ec 14 aprile sar\u00e0 attiva la nuova VPN GlobalProtect. Le credenziali restano invariate (dominio CASILLO). Scaricare il nuovo client dal portale Self-Service IT. La vecchia VPN verr\u00e0 disattivata il 21 aprile.",
+    title: "Nuova VPN aziendale attiva da lunedì",
+    body: "Da lunedì 14 aprile sarà attiva la nuova VPN GlobalProtect. Le credenziali restano invariate (dominio CASILLO). Scaricare il nuovo client dal portale Self-Service IT. La vecchia VPN verrà disattivata il 21 aprile.",
     priority: "warning",
     author: "IT Security",
     createdAt: "2026-04-08",
@@ -520,7 +558,7 @@ const INITIAL_ANNOUNCEMENTS = [
   {
     id: 3,
     title: "Aggiornamento policy password",
-    body: "Ricordiamo che dal 1\u00b0 maggio entra in vigore la nuova policy password: minimo 12 caratteri, almeno 1 maiuscola, 1 numero e 1 carattere speciale. Il cambio password verr\u00e0 richiesto automaticamente al prossimo login dopo tale data.",
+    body: "Ricordiamo che dal 1° maggio entra in vigore la nuova policy password: minimo 12 caratteri, almeno 1 maiuscola, 1 numero e 1 carattere speciale. Il cambio password verrà richiesto automaticamente al prossimo login dopo tale data.",
     priority: "info",
     author: "IT Security",
     createdAt: "2026-04-07",
@@ -530,7 +568,7 @@ const INITIAL_ANNOUNCEMENTS = [
   {
     id: 4,
     title: "Nuovo portale documentale SharePoint",
-    body: "\u00c8 disponibile il nuovo portale documentale su SharePoint Online per la condivisione dei documenti di progetto. Accesso tramite SSO con le credenziali aziendali Microsoft 365. Formazione online disponibile su Teams.",
+    body: "È disponibile il nuovo portale documentale su SharePoint Online per la condivisione dei documenti di progetto. Accesso tramite SSO con le credenziali aziendali Microsoft 365. Formazione online disponibile su Teams.",
     priority: "info",
     author: "IT Applications",
     createdAt: "2026-04-05",
@@ -550,7 +588,7 @@ const INITIAL_ANNOUNCEMENTS = [
   {
     id: 6,
     title: "Workshop: Introduzione a Claude AI per l'ufficio",
-    body: "Gioved\u00ec 17 aprile alle 15:00 in sala riunioni Bari si terr\u00e0 un workshop introduttivo su Claude AI e le sue applicazioni in ambito aziendale. Iscrizioni aperte tramite il modulo su Teams. Posti limitati a 20 partecipanti.",
+    body: "Giovedì 17 aprile alle 15:00 in sala riunioni Bari si terrà un workshop introduttivo su Claude AI e le sue applicazioni in ambito aziendale. Iscrizioni aperte tramite il modulo su Teams. Posti limitati a 20 partecipanti.",
     priority: "info",
     author: "Antonio Povia - IT",
     createdAt: "2026-04-10",
@@ -696,7 +734,7 @@ function NewAnnouncementForm({ onAdd, onCancel }) {
 
       <FormRow>
         <FormField>
-          <label>Priorit\u00e0</label>
+          <label>Priorità</label>
           <select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}>
             <option value="info">Informativo</option>
             <option value="warning">Attenzione</option>
@@ -800,7 +838,7 @@ export default function ITBoard({ onBack }) {
 
   return (
     <PageContainer>
-      {/* Link a Material Icons (da includere nel portale se non gi\u00e0 presente) */}
+      {/* Link a Material Icons (da includere nel portale se non già presente) */}
       <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/icon?family=Material+Icons"
@@ -819,10 +857,26 @@ export default function ITBoard({ onBack }) {
           </HeaderIcon>
           <HeaderTitle>
             <h1>IT Board</h1>
-            <p>Bacheca Annunci IT \u2014 Gruppo Casillo</p>
+            <p>Bacheca Annunci IT — Gruppo Casillo</p>
           </HeaderTitle>
         </HeaderLeft>
         <HeaderRight>
+          {sessionStorage.getItem("User") && (
+            <UserChip title="Utente autenticato dal portale">
+              <span className="material-icons">person</span>
+              {sessionStorage.getItem("User")}
+            </UserChip>
+          )}
+          <LogoutButton
+            onClick={() => {
+              sessionStorage.clear();
+              window.open("https://webapp.molinocasillo.it/", "_self");
+            }}
+            title="Disconnetti e torna al portale"
+          >
+            <span className="material-icons">logout</span>
+            Esci
+          </LogoutButton>
           <AdminButton active={isAdmin} onClick={() => setIsAdmin(!isAdmin)}>
             {isAdmin ? "Admin ON" : "Admin"}
           </AdminButton>
@@ -862,7 +916,7 @@ export default function ITBoard({ onBack }) {
             ))}
           </Select>
           <Select value={selectedPriority} onChange={(e) => setSelectedPriority(e.target.value)}>
-            <option value="all">Tutte le priorit\u00e0</option>
+            <option value="all">Tutte le priorità</option>
             <option value="critical">Critico</option>
             <option value="warning">Attenzione</option>
             <option value="info">Informativo</option>
@@ -907,7 +961,7 @@ export default function ITBoard({ onBack }) {
         </CardList>
 
         <Footer>
-          <p>IT Board v1.0 \u2014 Gruppo Casillo \u2014 Portale AWS</p>
+          <p>IT Board v1.0 — Gruppo Casillo — Portale AWS</p>
         </Footer>
       </Main>
     </PageContainer>

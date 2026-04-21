@@ -6,12 +6,56 @@
     <meta name="theme-color" content="#1a73e8" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <!-- Librerie per gate di autenticazione: MD5 sul token "US/TK" generato dal portale -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
     <title>IT Board - Gruppo Casillo</title>
   </head>
   <body>
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
+
+    <!--
+      Gate di autenticazione — stesso pattern di RdA-Create, OdA-Approve, WF-Approve, ecc.
+      Il portale webapp.molinocasillo.it genera l'URL ?US=<username>&TK=<md5(HH+MM)>
+      quando l'utente clicca la tile IT Board. Qui verifichiamo il token:
+       - se valido -> salviamo User e Logged in sessionStorage, puliamo la URL, lasciamo partire React
+       - se non valido e non già loggato in questa tab -> redirect al portale
+      Per sviluppo locale, decommentare il blocco "DEV BYPASS" qui sotto.
+    -->
+    <script>
+      // === DEV BYPASS (decommentare per npm start in locale) ============
+      // sessionStorage.setItem("Logged", "X");
+      // sessionStorage.setItem("User", "DEVUSER");
+      // ==================================================================
+
+      (function () {
+        var logged = sessionStorage.getItem("Logged");
+        var usr = sessionStorage.getItem("User");
+        var url = new URL(window.location.href);
+        var sParam = url.searchParams.get("US");
+        var sParam2 = url.searchParams.get("TK");
+        var d = new Date();
+        var passhash = CryptoJS.MD5(d.getHours() + d.getMinutes() + "").toString();
+
+        if (passhash === sParam2 && sParam) {
+          usr = sParam;
+          logged = "X";
+          sessionStorage.setItem("Logged", logged);
+          sessionStorage.setItem("User", usr);
+        }
+
+        if (logged !== "X") {
+          window.open("https://webapp.molinocasillo.it/", "_self");
+          return;
+        }
+
+        // Pulisce l'URL dai query param (US, TK) così non restano in cronologia
+        window.history.replaceState({}, document.title, "/");
+      })();
+    </script>
+
     <div id="root"></div>
   </body>
 </html>
