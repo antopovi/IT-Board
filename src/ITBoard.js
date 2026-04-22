@@ -4,6 +4,7 @@
 // ============================================================
 import React, { useState, useMemo } from "react";
 import styled from "styled-components";
+import Helpdesk from "./Helpdesk";
 
 // ========================
 // STYLED COMPONENTS
@@ -156,6 +157,34 @@ const Main = styled.main`
   max-width: 800px;
   margin: 0 auto;
   padding: 24px 16px;
+`;
+
+const TabBar = styled.div`
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+`;
+
+const TabButton = styled.button`
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid ${(props) => (props.active ? "#1a73e8" : "transparent")};
+  color: ${(props) => (props.active ? "#1a73e8" : "#718096")};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  .material-icons {
+    font-size: 18px;
+  }
+  &:hover {
+    color: #1a73e8;
+  }
 `;
 
 const Toolbar = styled.div`
@@ -794,6 +823,7 @@ export default function ITBoard({ onBack }) {
   const [selectedCategory, setSelectedCategory] = useState("Tutte");
   const [selectedPriority, setSelectedPriority] = useState("all");
   const [showExpired, setShowExpired] = useState(false);
+  const [activeTab, setActiveTab] = useState("bacheca");
 
   const filteredAnnouncements = useMemo(() => {
     return announcements
@@ -900,65 +930,82 @@ export default function ITBoard({ onBack }) {
       </Header>
 
       <Main>
-        <Toolbar>
-          <SearchBox>
-            <span className="material-icons">search</span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cerca annunci..."
-            />
-          </SearchBox>
-          <Select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </Select>
-          <Select value={selectedPriority} onChange={(e) => setSelectedPriority(e.target.value)}>
-            <option value="all">Tutte le priorità</option>
-            <option value="critical">Critico</option>
-            <option value="warning">Attenzione</option>
-            <option value="info">Informativo</option>
-          </Select>
-          <CheckboxLabel>
-            <input
-              type="checkbox"
-              checked={showExpired}
-              onChange={(e) => setShowExpired(e.target.checked)}
-            />
-            Scaduti
-          </CheckboxLabel>
-        </Toolbar>
+        <TabBar>
+          <TabButton active={activeTab === "bacheca"} onClick={() => setActiveTab("bacheca")}>
+            <span className="material-icons">campaign</span>
+            Bacheca
+          </TabButton>
+          <TabButton active={activeTab === "helpdesk"} onClick={() => setActiveTab("helpdesk")}>
+            <span className="material-icons">support_agent</span>
+            Helpdesk
+          </TabButton>
+        </TabBar>
 
-        {isAdmin && !showForm && (
-          <NewButton onClick={() => setShowForm(true)}>
-            <span className="material-icons">add</span>
-            Nuovo Annuncio
-          </NewButton>
-        )}
-        {isAdmin && showForm && (
-          <NewAnnouncementForm onAdd={handleAdd} onCancel={() => setShowForm(false)} />
+        {activeTab === "bacheca" && (
+          <>
+            <Toolbar>
+              <SearchBox>
+                <span className="material-icons">search</span>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cerca annunci..."
+                />
+              </SearchBox>
+              <Select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </Select>
+              <Select value={selectedPriority} onChange={(e) => setSelectedPriority(e.target.value)}>
+                <option value="all">Tutte le priorità</option>
+                <option value="critical">Critico</option>
+                <option value="warning">Attenzione</option>
+                <option value="info">Informativo</option>
+              </Select>
+              <CheckboxLabel>
+                <input
+                  type="checkbox"
+                  checked={showExpired}
+                  onChange={(e) => setShowExpired(e.target.checked)}
+                />
+                Scaduti
+              </CheckboxLabel>
+            </Toolbar>
+
+            {isAdmin && !showForm && (
+              <NewButton onClick={() => setShowForm(true)}>
+                <span className="material-icons">add</span>
+                Nuovo Annuncio
+              </NewButton>
+            )}
+            {isAdmin && showForm && (
+              <NewAnnouncementForm onAdd={handleAdd} onCancel={() => setShowForm(false)} />
+            )}
+
+            <CardList>
+              {filteredAnnouncements.length === 0 ? (
+                <EmptyState>
+                  <span className="material-icons">campaign</span>
+                  <p>Nessun annuncio trovato</p>
+                  <small>Prova a modificare i filtri di ricerca</small>
+                </EmptyState>
+              ) : (
+                filteredAnnouncements.map((a) => (
+                  <AnnouncementCard
+                    key={a.id}
+                    announcement={a}
+                    onDelete={handleDelete}
+                    isAdmin={isAdmin}
+                  />
+                ))
+              )}
+            </CardList>
+          </>
         )}
 
-        <CardList>
-          {filteredAnnouncements.length === 0 ? (
-            <EmptyState>
-              <span className="material-icons">campaign</span>
-              <p>Nessun annuncio trovato</p>
-              <small>Prova a modificare i filtri di ricerca</small>
-            </EmptyState>
-          ) : (
-            filteredAnnouncements.map((a) => (
-              <AnnouncementCard
-                key={a.id}
-                announcement={a}
-                onDelete={handleDelete}
-                isAdmin={isAdmin}
-              />
-            ))
-          )}
-        </CardList>
+        {activeTab === "helpdesk" && <Helpdesk isAdmin={isAdmin} />}
 
         <Footer>
           <p>IT Board v1.0 — Gruppo Casillo — Portale AWS</p>
